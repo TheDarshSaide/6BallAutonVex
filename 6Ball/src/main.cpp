@@ -34,10 +34,12 @@ motor LeftMotor3{PORT6,true};
 
 motor intake(PORT7,false);
 
+digital_out wing1 = digital_out(Brain.ThreeWirePort.A);
+digital_out wing2= digital_out(Brain.ThreeWirePort.B);
 
 
-motor_group RightMotors {LeftMotor1,LeftMotor2,LeftMotor3};
-motor_group LeftMotors {RightMotor1,RightMotor2,RightMotor3};
+motor_group LeftMotors {LeftMotor1,LeftMotor2,LeftMotor3};
+motor_group RightMotors {RightMotor1,RightMotor2,RightMotor3};
 
 drivetrain Drive{LeftMotors,RightMotors};
 
@@ -98,6 +100,29 @@ int turnTotalError = 0;
 
 //varibles modified for use
 bool enableDrivePID = false;
+void open_wings():
+    wing1.set(true);
+    wing2.set(true);
+
+void close_wings():
+    wing1.set(false);
+    wing2.set(false);
+
+void Intake(void){
+  intake.spin(forward);
+  while (Controller1.ButtonR1.pressing()){
+    wait(10,msec);
+  }
+  intake.stop();
+}
+
+void Outake(void){
+  intake.spin(reverse);
+  while (Controller1.ButtonR2.pressing()){
+    wait(10,msec);
+  }
+  intake.stop();
+}
 
 int drivePID(){
   while(enableDrivePID){
@@ -156,12 +181,51 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
-  enableDrivePID = true;
-  vex::task zuperman(drivePID);
-  Drive.driveFor(forward,25,inches);
-  Drive.turnFor(right,20,degrees);
-  
-
+  intake.spin(forward);
+  Drive.driveFor(FORWARD,6,INCHES,wait=False);
+  wait(0.5,seconds);
+  Drive.driveFor(reverse,18,INCHES,wait=False);
+  wait(2,seconds);
+  Drive.turnFor(left,50,degrees,wait=False);
+  wait(0.5,seconds);
+  Drive.driveFor(reverse,2,INCHES,wait=False);
+  wait(0.45,seconds);
+  wing1.set(true);
+  Drive.turn_for(left,50,degrees,wait=False);
+  wait(0.5,seconds);
+  wing1.set(false);
+  wait(0.1,seconds);
+  Drive.drive_for(reverse,5,INCHES,wait=False);
+  wait(0.45,seconds);
+  Drive.turn_for(right,180,degrees,wait=False);
+  wait(1,seconds);
+  intake.spin(reverse);
+  Drive.drive_for(forward,5,inches,wait=False);
+  wait(0.5,seconds);
+  intake.stop();
+  Drive.turn_for(left,90,degrees,wait=False);
+  wait(0.5,seconds);
+  Drive.drive_for(forward,18,inches,wait=False);
+  wait(0.5,seconds);
+  Drive.turn_for(right,90,degrees,wait=False);
+  wait(0.5,seconds);
+  intake.spin(forward);
+  Drive.drive_for(forward,5,inches,wait=False);
+  wait(0.5,seconds);
+  Drive.turn_for(right,90,degrees,wait=False);
+  wait(0.5,seconds);
+  intake.spin(reverse);
+  Drive.turn_for(left,90,degrees,wait=False);
+  wait(0.5,seconds);
+  intake.spin(forward);
+  Drive.drive_for(forward,5,inches,wait=False);
+  wait(0.5,seconds);
+  Drive.turn_for(right,90,degrees,wait=False);
+  wait(0.5,seconds);
+  wing1.set(true);
+  wing2.set(true);
+  Drive.drive_for(reverse,20,inches,wait=False);
+  wait(2,seconds);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -189,6 +253,10 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
    Drive.arcade(Controller1.Axis3.value(), Controller1.Axis1.value());
+   Controller1.ButtonX.pressed(vIn);
+   Controller1.ButtonB.pressed(vOut);
+   Controller1.ButtonR1.pressed(Intake);
+   Controller1.ButtonR2.pressed(Outake);
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
