@@ -25,12 +25,12 @@ competition Competition;
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-motor LeftMotor1{PORT1,false};
-motor LeftMotor2{PORT2,false};
-motor LeftMotor3{PORT3,false};
-motor RightMotor1{PORT4,true};
-motor RightMotor2{PORT5,true};
-motor RightMotor3{PORT6,true};
+motor RightMotor1{PORT1,false};
+motor RightMotor2{PORT2,false};
+motor RightMotor3{PORT3,false};
+motor LeftMotor1{PORT4,true};
+motor LeftMotor2{PORT5,true};
+motor LeftMotor3{PORT6,true};
 
 motor intake(PORT7,false);
 
